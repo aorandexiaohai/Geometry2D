@@ -1,5 +1,5 @@
 #pragma once
-#include "LineSeg.h"
+#include "lineSeg.h"
 namespace G2D{
     class Vector: public LineSeg
     {
