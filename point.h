@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 namespace G2D
 {
 class Point
@@ -31,5 +32,9 @@ class Point
     {
         return (!(*this < pt)) && (!(pt < *this));
     }
+    /*测试任意三点是否都共线*/
+    public:
+        //n^2log(n) 算法复杂度
+        static bool onLine(const std::vector<Point>& pts);
 };
 } // namespace G2D
