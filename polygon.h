@@ -5,6 +5,7 @@ namespace G2D{
     //简单多边形:凹或者凸多边形
     class Polygon{
     public:
+        //不包含最后一点
         std::vector<Point> pts;
     private:
         //边界是不是在多边形内部
