@@ -120,6 +120,18 @@ class LineSeg
     {
         return SEGMENTS_INTERSECT(this->beg, this->end, ls.beg, ls.end);
     }
+    
+    //是否在线段上
+    bool isOn(const Point& pt)const
+    {
+        auto d1 = DIRECTION(beg, end, pt);
+        return d1 == 0 && ON_SEGMENT(beg, end, pt);
+    }
+
+    //和线段是否平行
+    bool isParallel(const LineSeg& ls) const{
+        return this->cross(ls) == 0;
+    }
 
     //beg到end的射线是否与线段ls相交
     bool isRadialIntersection(const LineSeg &ls) const
