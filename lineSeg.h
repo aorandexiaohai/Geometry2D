@@ -4,9 +4,47 @@
 #include <cassert>
 #include <utility>
 #include <algorithm>
+#include <utility>
+#include <type_traits>
+#include <assert.h>
 
 namespace G2D
 {
+
+template <typename T>
+T vmin(T &&t)
+{
+    return std::forward<T>(t);
+}
+
+template <typename T0, typename T1, typename... Ts>
+typename std::common_type<
+    T0, T1, Ts...>::type
+vmin(T0 &&val1, T1 &&val2, Ts &&... vs)
+{
+    if (val2 < val1)
+        return vmin(val2, std::forward<Ts>(vs)...);
+    else
+        return vmin(val1, std::forward<Ts>(vs)...);
+}
+
+template <typename T>
+T vmax(T &&t)
+{
+    return std::forward<T>(t);
+}
+
+template <typename T0, typename T1, typename... Ts>
+typename std::common_type<
+    T0, T1, Ts...>::type
+vmax(T0 &&val1, T1 &&val2, Ts &&... vs)
+{
+    if (val2 < val1)
+        return vmax(val2, std::forward<Ts>(vs)...);
+    else
+        return vmax(val1, std::forward<Ts>(vs)...);
+}
+
 class LineSeg
 {
   public:
@@ -36,14 +74,26 @@ class LineSeg
     void NormSelf()
     {
         auto len = this->length();
-        auto diff = end-beg;
+        auto diff = end - beg;
         diff /= len;
         end = beg + diff;
     }
-    LineSeg Norm()const
+    LineSeg Norm() const
     {
         auto tmp = *this;
         tmp.NormSelf();
+        return tmp;
+    }
+    void ScaleSelf(double rate)
+    {
+        auto diff = end - beg;
+        diff *= rate;
+        end = beg + diff;
+    }
+    LineSeg Scale(double rate) const
+    {
+        auto tmp = *this;
+        tmp.ScaleSelf(rate);
         return tmp;
     }
     //连续线段p0p1 p1p2
@@ -69,6 +119,34 @@ class LineSeg
     bool isIntersection(const LineSeg &ls) const
     {
         return SEGMENTS_INTERSECT(this->beg, this->end, ls.beg, ls.end);
+    }
+
+    //beg到end的射线是否与线段ls相交
+    bool isRadialIntersection(const LineSeg &ls) const
+    {
+        //将线段延长至合理的范围
+        auto diffx = end.x - beg.x;
+        auto diffy = end.y - beg.y;
+
+        decltype(end.x) maxs[] = {std::abs(vmax(end.x, beg.x, ls.end.x, ls.beg.x)) + 1.0, std::abs(vmax(end.y, beg.y, ls.end.y, ls.beg.y)) + 1.0};
+        decltype(end.x) diffes[] = {diffx, diffy};
+        decltype(end.x) base[] = {beg.x, beg.y};
+
+        //选择x,y轴为参考，主要是防止diff值为0的时候
+        int choose_dir = 0;
+        if (std::abs(diffy) > std::abs(diffx))
+        {
+            choose_dir = 1;
+        }
+        assert(diffes[choose_dir] != 0);
+        double sign = diffes[choose_dir] > 0 ? 1 : -1;
+        auto target_value = maxs[choose_dir] * sign;
+        double rate = (target_value - base[choose_dir]) / diffes[choose_dir];
+        
+
+        auto new_seg = this->Scale(rate);
+
+        return new_seg.isIntersection(ls);
     }
 
   private:
