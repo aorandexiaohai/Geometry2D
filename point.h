@@ -55,9 +55,10 @@ class Point
     }
     /*测试任意三点是否都共线*/
   public:
-    //n^2log(n) 算法复杂度
-    static bool onLine(const std::vector<Point> &pts);
     //角度pjpipk的大小，[2, PI)
     static double polarAngle(const Point &pi, const Point &pj, const Point &pk);
+    
+    //这些点能否组成一个凸多边形的连续顶点
+    static bool isConvex(const std::vector<Point>& pts);
 };
 } // namespace G2D

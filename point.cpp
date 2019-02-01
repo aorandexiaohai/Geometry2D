@@ -16,4 +16,3 @@ static double polarAngle(const Point& pi, const Point& pj, const Point& pk)
     else
         return 2 * PI - std::acos(dv);
 }
-static bool onLine(const std::vector<Point>& pts);
