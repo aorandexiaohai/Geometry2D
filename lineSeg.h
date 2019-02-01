@@ -27,6 +27,25 @@ class LineSeg
         auto v2 = ls.end - ls.beg;
         return (v1.x * v2.y - v1.y * v2.x);
     }
+    double dot(const LineSeg &ls) const
+    {
+        auto v1 = end - beg;
+        auto v2 = ls.end - ls.beg;
+        return (v1.x * v2.x + v1.y * v2.y);
+    }
+    void NormSelf()
+    {
+        auto len = this->length();
+        auto diff = end-beg;
+        diff /= len;
+        end = beg + diff;
+    }
+    LineSeg Norm()const
+    {
+        auto tmp = *this;
+        tmp.NormSelf();
+        return tmp;
+    }
     //连续线段p0p1 p1p2
     //this代表:p0p1
     //ls代表:p1p2
