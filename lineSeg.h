@@ -124,6 +124,9 @@ class LineSeg
     //beg到end的射线是否与线段ls相交
     bool isRadialIntersection(const LineSeg &ls) const
     {
+        //todo:
+        //如果场景有合理的值的范围，可以直接用边界的上下界，而不用下面的代码。
+
         //将线段延长至合理的范围
         auto diffx = end.x - beg.x;
         auto diffy = end.y - beg.y;
